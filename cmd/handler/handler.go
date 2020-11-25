@@ -21,20 +21,19 @@ func LoginCheck() gin.HandlerFunc {
 // GetOneTopic ...
 func GetOneTopic() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, ConstructTopic(924, "Fuck with Loba"))
+		if id, exist := c.GetQuery("id"); exist {
+			c.String(200, "topic id: %s", id)
+		} else {
+			c.String(http.StatusNotFound, "topic not found")
+		}
 	}
+
 }
 
 // GetAllTopic ...
 func GetAllTopic() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		query := QueryParam{}
-		err := c.BindQuery(&query)
-		if err != nil {
-			c.String(400, "invalid parameters: %s", err.Error())
-		} else {
-			c.JSON(200, query)
-		}
+		c.JSON(http.StatusOK, ConstructTopic(924, "All topics are listed. Let's F*ck with Loba now"))
 	}
 }
 
@@ -44,7 +43,7 @@ func PostNewTopic() gin.HandlerFunc {
 		topic := Topic{}
 		err := c.BindJSON(&topic)
 		if err != nil {
-			c.String(400, "invalid parameters: %s", err.Error())
+			c.String(400, "invalid parameters:\n%s", err.Error())
 		} else {
 			c.JSON(200, topic)
 		}
@@ -64,7 +63,7 @@ func PostNewTopics() gin.HandlerFunc {
 		topics := Topics{}
 		err := c.BindJSON(&topics)
 		if err != nil {
-			c.String(400, "invalid parameters: %s", err.Error())
+			c.String(400, "invalid parameters:\n%s", err.Error())
 		} else {
 			c.JSON(200, topics)
 		}

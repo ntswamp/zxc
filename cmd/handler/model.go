@@ -1,5 +1,11 @@
 package handler
 
+import (
+	"regexp"
+
+	"github.com/go-playground/validator/v10"
+)
+
 // Topic ...
 type Topic struct {
 	ID         int    `json:"id"`
@@ -7,13 +13,33 @@ type Topic struct {
 	ShortTitle string `json:"stitle" binding:"nefield=Title"`
 	UserIP     string `json:"ip" binding:"ip"`
 	Score      int    `json:"score" binding:"omitempty,lte=4"`
-	URL        string `json:"url" binding:"omitempty" validate:"topicurl"`
+	URL        string `json:"url" binding:"omitempty,topicurl"`
+}
+
+// TopicURLValidator ...
+func TopicURLValidator(fl validator.FieldLevel) bool {
+	if _, ok := fl.Parent().Interface().(Topic); ok {
+		if matched, _ := regexp.MatchString(`^\w{4,10}$`, fl.Field().String()); matched {
+			return true
+		}
+	}
+	return false
 }
 
 //Topics ...
 type Topics struct {
-	Topics []Topic `json:"topics" binding:"gt=0,lte=3,dive"`
-	Size   int     `json:"size"`
+	Topics []*Topic `json:"topics" binding:"gt=0,lte=3,dive"`
+	Size   int      `json:"size" binding:"topicssize"`
+}
+
+//TopicsSizeValidator ...
+func TopicsSizeValidator(fl validator.FieldLevel) bool {
+	if topics, ok := fl.Parent().Interface().(*Topics); ok {
+		if topics.Size == len(topics.Topics) {
+			return true
+		}
+	}
+	return false
 }
 
 // QueryParam ...
