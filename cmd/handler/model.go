@@ -53,3 +53,11 @@ type QueryParam struct {
 func ConstructTopic(id int, title string) Topic {
 	return Topic{ID: id, Title: title}
 }
+
+// TopicClass...
+type TopicClass struct {
+	ClassId     int
+	ClassName   string
+	ClassRemark string
+	ClassWater  string `gorm:"Column:classwater"`
+}
