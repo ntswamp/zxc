@@ -2,22 +2,24 @@ package handler
 
 import (
 	"regexp"
+	"time"
 
-	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator"
 )
 
 // Topic ...
 type Topic struct {
-	ID         int    `json:"id"`
-	Title      string `json:"title" binding:"min=2,max=30"`
-	ShortTitle string `json:"stitle" binding:"nefield=Title"`
-	UserIP     string `json:"ip" binding:"ip"`
-	Score      int    `json:"score" binding:"omitempty,lte=4"`
-	URL        string `json:"url" binding:"omitempty,topicurl"`
+	Id         int       `json:"id" gorm:"PRIMARY_KEY"`
+	Title      string    `json:"title" binding:"min=2,max=30"`
+	ShortTitle string    `json:"stitle" binding:"nefield=Title"`
+	UserIp     string    `json:"ip" binding:"ip"`
+	Score      int       `json:"score" binding:"omitempty,lte=4"`
+	Url        string    `json:"url" binding:"omitempty,topicurl"`
+	Date       time.Time `json:"date" binding:"required"`
 }
 
 // TopicURLValidator ...
-func TopicURLValidator(fl validator.FieldLevel) bool {
+func TopicUrlValidator(fl validator.FieldLevel) bool {
 	if _, ok := fl.Parent().Interface().(Topic); ok {
 		if matched, _ := regexp.MatchString(`^\w{4,10}$`, fl.Field().String()); matched {
 			return true
@@ -51,7 +53,7 @@ type QueryParam struct {
 
 // ConstructTopic ...
 func ConstructTopic(id int, title string) Topic {
-	return Topic{ID: id, Title: title}
+	return Topic{Id: id, Title: title}
 }
 
 // TopicClass...

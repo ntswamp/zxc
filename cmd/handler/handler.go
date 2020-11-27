@@ -21,13 +21,14 @@ func LoginCheck() gin.HandlerFunc {
 // GetOneTopic ...
 func GetOneTopic() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if id, exist := c.GetQuery("id"); exist {
-			c.String(200, "topic id: %s", id)
-		} else {
-			c.String(http.StatusNotFound, "topic not found")
-		}
-	}
 
+		tid := c.Param("topic_id") // capture params specified in source code i.e main.go /:topic_id
+		topic := Topic{}
+		DB.Find(&topic, tid)
+		c.JSON(200, topic)
+		//} else {
+		//	c.String(http.StatusNotFound, "topic not found")
+	}
 }
 
 // GetAllTopic ...
